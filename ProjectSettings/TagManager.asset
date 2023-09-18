@@ -10,6 +10,7 @@ TagManager:
   - red
   - jump
   - stair
+  - treasure area
   layers:
   - Default
   - TransparentFX

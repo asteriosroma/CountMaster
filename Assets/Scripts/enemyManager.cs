@@ -7,15 +7,23 @@ public class enemyManager : MonoBehaviour
 {
     public TextMeshPro CounterTxt;
     [SerializeField] private GameObject stickMan;
+    [SerializeField] private bool boss;
     [Range(0f,1f)] [SerializeField] private float DistanceFactor, Radius;
 
     public Transform enemy;
     public bool attack;
     void Start()
     {
-        for (int i = 0; i < Random.Range(20,120); i++)
+        if (boss)
         {
             Instantiate(stickMan, transform.position, new Quaternion(0f, 180f, 0f, 1f), transform);
+        }
+        else
+        {
+            for (int i = 0; i < Random.Range(20, 120); i++)
+            {
+                Instantiate(stickMan, transform.position, new Quaternion(0f, 180f, 0f, 1f), transform);
+            }
         }
 
         CounterTxt.text = (transform.childCount - 1).ToString();

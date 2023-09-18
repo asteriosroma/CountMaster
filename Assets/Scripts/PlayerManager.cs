@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using Cinemachine;
 using DG.Tweening;
@@ -8,9 +9,12 @@ using UnityEngine;
 public class PlayerManager : MonoBehaviour
 {
     public Transform player;
+    public menuManager menu;
     private int numberOfStickmans,numberOfEnemyStickmans;
+    private int stairCountToPass;
     [SerializeField] private TextMeshPro CounterTxt;
     [SerializeField] private GameObject stickMan;
+    private bool treasureReached;
     //****************************************************
 
    [Range(0f,1f)] [SerializeField] private float DistanceFactor, Radius;
@@ -42,6 +46,8 @@ public class PlayerManager : MonoBehaviour
         PlayerManagerInstance = this;
 
         gameState = false;
+
+        stairCountToPass = 16;
     }
     
     void Update()
@@ -90,13 +96,12 @@ public class PlayerManager : MonoBehaviour
             {
                 enemy.transform.GetChild(1).GetComponent<enemyManager>().StopAttacking();
                 gameObject.SetActive(false);
-             
+                menu.ShowDefeatScreen();
             }
         }
         else
         {
             MoveThePlayer();
-            
         }
 
         
@@ -106,16 +111,9 @@ public class PlayerManager : MonoBehaviour
         }
         
        
-        if (gameState)
+        if (gameState && !treasureReached)
         {
           road.Translate(road.forward * Time.deltaTime * roadSpeed);
-            
-           // for (int i = 1; i < transform.childCount; i++)
-           // {
-           //     if (transform.GetChild(i).GetComponent<Animator>() != null)
-           //         transform.GetChild(i).GetComponent<Animator>().SetBool("run",true);
-           //    
-           // }
         }
 
         if (moveTheCamera && transform.childCount > 1)
@@ -256,6 +254,56 @@ public class PlayerManager : MonoBehaviour
             transform.GetChild(0).gameObject.SetActive(false);
             
         }
+
+        if (other.CompareTag("treasure area"))
+        {
+            treasureReached = true;
+            for (int i = 1; i < transform.childCount; i++)
+            {
+                Transform tower = transform.GetChild(i);
+                for (int j = 0; j < tower.childCount; j++)
+                {
+                    if (tower.GetChild(j).GetComponent<Animator>() != null)
+                    {
+                        tower.GetChild(j).GetComponent<Animator>().SetBool("run", false);
+                    }
+                }
+            }
+
+            if (CheckWinCondition())
+            {
+                menu.ShowVictoryScreen();
+            }
+        }
+
+        if (other.CompareTag("stair"))
+        {
+            if (CheckWinCondition())
+            {
+                stairCountToPass--;
+            }
+            else
+            {
+                menu.ShowDefeatScreen();
+            }
+        }
+    }
+
+    private bool CheckWinCondition()
+    {
+        bool result = true;
+        if(transform.childCount > stairCountToPass)
+        {
+            result = true;
+        }
+        else
+        {
+            if (transform.childCount <= 2)
+            {
+                result = false;
+            }
+        }
+        return result;
     }
 
     IEnumerator UpdateTheEnemyAndPlayerStickMansNumbers()
@@ -268,6 +316,7 @@ public class PlayerManager : MonoBehaviour
         {
             numberOfEnemyStickmans--;
             numberOfStickmans--;
+            menu.Money += menu.RewardMoney; 
 
             enemy.transform.GetChild(1).GetComponent<enemyManager>().CounterTxt.text = numberOfEnemyStickmans.ToString();
             CounterTxt.text = numberOfStickmans.ToString();

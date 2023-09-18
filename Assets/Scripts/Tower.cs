@@ -28,6 +28,7 @@ public class Tower : MonoBehaviour
         StartCoroutine(BuildTowerCoroutine());
       
     }
+
     void FillTowerList()
     {
         for (int i = 1; i <= maxPlayerPerRow; i++)
@@ -51,6 +52,8 @@ public class Tower : MonoBehaviour
         }
     
     }
+
+    
     
     IEnumerator BuildTowerCoroutine()
     {
@@ -75,7 +78,7 @@ public class Tower : MonoBehaviour
                 
                 var towerNewPos = Vector3.zero;
                 float tempTowerHumanCount = 0;
-                
+
                 for (int i = 1; i < transform.childCount; i++)
                 {
                     Transform child = transform.GetChild(i);
@@ -94,6 +97,7 @@ public class Tower : MonoBehaviour
                 tower.transform.position = new Vector3(-towerNewPos.x / towerHumanCount, tower.transform.position.y - yOffset, tower.transform.position.z);
              
                 towerId++;
+
                 yield return new WaitForSecondsRealtime(0.2f);
             }
     }
