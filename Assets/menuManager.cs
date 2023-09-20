@@ -38,24 +38,6 @@ public class menuManager : MonoBehaviour
         PlayerManager.PlayerManagerInstance.gameState = true;
         PlayerManager.PlayerManagerInstance.menu = this;
         money = PlayerPrefs.GetInt("money");
-
-        try
-        {
-            Transform playerT = PlayerManager.PlayerManagerInstance?.player?.GetChild(1);
-            if (playerT != null)
-            {
-                Animator playerA;
-                playerT.TryGetComponent<Animator>(out playerA);
-                if (playerA != null)
-                {
-                    playerA.SetBool("run", true);
-                }
-            }
-        }
-        catch(Exception ex)
-        {
-            print(ex);
-        }
     }
 
     public void ShowVictoryScreen()
